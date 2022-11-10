@@ -6,3 +6,4 @@ src/node_modules
 src/public/hots
 src/public/storage
 src/storage/*.key
+vendor/
