@@ -16,10 +16,10 @@ type AuthController struct {
 var SessionList = make(map[string]domain.Session)
 
 // refer: https://github.com/sat0ken/goauth-server/blob/main/main.go
-func (controller *AuthController) Auth(req *http.Request) (err error) {
+func (controller *AuthController) Auth(req *http.Request) (session domain.Session, err error) {
 
 	query := req.URL.Query()
-	session := domain.Session{
+	session = domain.Session{
 		ClientId:    query.Get("client_id"),
 		State:       query.Get("state"),
 		Scopes:      query.Get("scope"),
@@ -30,14 +30,16 @@ func (controller *AuthController) Auth(req *http.Request) (err error) {
 	for _, param := range requiredParameters {
 		if !query.Has(param) {
 			//TODO エラー処理の文章を変える
-			return fmt.Errorf("error! There is no required parameters")
+			err = fmt.Errorf("error! There is no required parameters")
+			return
 		}
 	}
 
 	// ClientIdの取得
 	_, err = controller.OAuthInteractor.FindByClientId(session.ClientId)
 	if err != nil {
-		return fmt.Errorf("error! client_id is not match")
+		err = fmt.Errorf("error! client_id is not match")
+		return
 	}
 	if query.Get("scope") == "openid profile" {
 		session.OIDC = true

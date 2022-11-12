@@ -1,7 +1,5 @@
 package domain
 
-import "html/template"
-
 type Session struct {
 	ClientId            string `json:"client_id"`
 	State               string `json:"state"`
@@ -84,7 +82,5 @@ type Env struct {
 type Envs []Env
 
 var ERROR_RESPONSE Env = Env{Value: "Error!"}
-
-var Templates = make(map[string]*template.Template)
 var AuthCodeList = make(map[string]AuthCode)
 var TokenCodeList = make(map[string]TokenCode)

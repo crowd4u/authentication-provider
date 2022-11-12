@@ -3,7 +3,10 @@ package infra
 import (
 	"errors"
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
+	"notchman8600/authentication-provider/controller"
 )
 
 type Router struct {
@@ -23,6 +26,7 @@ var (
 	ErrNotFound         = errors.New("no matching route was found")
 	ErrMethodNotAllowed = errors.New("method is not allowed")
 )
+var Templates = make(map[string]*template.Template)
 
 func (r *Router) Handle() {
 	r.tree.Insert(tmpRoute.methods, tmpRoute.path, tmpRoute.handler)
@@ -72,9 +76,21 @@ func indexHandler() http.Handler {
 	})
 }
 
-func authHandler() http.Handler {
+func authHandler(controller *controller.AuthController) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
+		session, err := controller.Auth(r)
+		if err != nil {
+			//TODO エラーレスポンスの作成
+		}
+		if err := Templates["login"].Execute(w, struct {
+			ClientId string
+			Scope    string
+		}{
+			ClientId: session.ClientId,
+			Scope:    session.Scopes,
+		}); err != nil {
+			log.Println(err)
+		}
 	})
 }
 
@@ -89,8 +105,10 @@ func NewRouter() *Router {
 	router := &Router{
 		tree: NewTree(),
 	}
+	authController := controller.AuthController()
 
 	router.Methods(http.MethodGet).Handler("/", indexHandler())
 	router.Methods(http.MethodGet).Handler("/sample", sampleHandler())
+	router.Methods(http.MethodGet).Handler("/auth", authHandler(authController))
 	return router
 }
