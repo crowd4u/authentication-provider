@@ -21,7 +21,7 @@ type route struct {
 var (
 	tmpRoute            = &route{}
 	ErrNotFound         = errors.New("no matching route was found")
-	ErrMethodNotAllowed = errors.New("Method is not allowed")
+	ErrMethodNotAllowed = errors.New("method is not allowed")
 )
 
 func (r *Router) Handle() {
@@ -69,6 +69,12 @@ func indexHandler() http.Handler {
 	// switching http method
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "GET /\r\n")
+	})
+}
+
+func authHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
 	})
 }
 
