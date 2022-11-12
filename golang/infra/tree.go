@@ -49,6 +49,7 @@ func explodePath(path string) []string {
 	s := strings.Split(path, pathDelimiter)
 	var r []string
 	for _, str := range s {
+		// hogehoge///hoge -> /hogehoge/hoge
 		if str != "" {
 			r = append(r, str)
 		}
@@ -92,4 +93,32 @@ func (t *tree) Insert(methods []string, path string, handler http.Handler) {
 			break
 		}
 	}
+}
+
+func (t *tree) Search(method string, path string) (*result, error) {
+	result := newResult()
+	curNode := t.node
+	//ルートパスで無い場合の処理
+	if path != pathRoot {
+		//を分解する
+		for _, p := range explodePath(path) {
+			//配下にキーが存在するかチェック
+			nextNode, ok := curNode.children[p]
+			//存在しない場合
+			if !ok {
+				//探索対象が自身であった場合
+				if p == curNode.label {
+					break
+				}
+				return nil, ErrNotFound
+			}
+			curNode = nextNode
+			continue
+		}
+	}
+	result.actions = curNode.actions[method]
+	if result.actions == nil {
+		return nil, ErrMethodNotAllowed
+	}
+	return result, nil
 }
