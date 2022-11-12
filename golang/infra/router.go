@@ -2,6 +2,7 @@ package infra
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 )
 
@@ -39,12 +40,6 @@ func (r *Router) Handler(path string, handler http.Handler) {
 	r.Handle()
 }
 
-func NewRouter() *Router {
-	return &Router{
-		tree: NewTree(),
-	}
-}
-
 func handleErr(err error) int {
 	var status int
 	switch err {
@@ -70,13 +65,26 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	h.ServeHTTP(w, req)
 }
 
-func IndexHandler(w http.ResponseWriter, r *http.Request) {
+func indexHandler() http.Handler {
 	// switching http method
-	switch r.Method {
-	case http.MethodGet:
-		// TODO
-	case http.MethodPost:
-		// TODO
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "GET /\r\n")
+	})
+}
 
+func sampleHandler() http.Handler {
+	// switching http method
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello World! \r\n")
+	})
+}
+
+func NewRouter() *Router {
+	router := &Router{
+		tree: NewTree(),
 	}
+
+	router.Methods(http.MethodGet).Handler("/", indexHandler())
+	router.Methods(http.MethodGet).Handler("/sample", sampleHandler())
+	return router
 }
