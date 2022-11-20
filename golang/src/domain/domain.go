@@ -20,7 +20,7 @@ type Client struct {
 }
 
 type User struct {
-	Id         int
+	Id         string
 	Name       string
 	Password   string
 	Sub        string
@@ -82,5 +82,3 @@ type Env struct {
 type Envs []Env
 
 var ERROR_RESPONSE Env = Env{Value: "Error!"}
-var AuthCodeList = make(map[string]AuthCode)
-var TokenCodeList = make(map[string]TokenCode)
