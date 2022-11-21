@@ -8,7 +8,7 @@ services:
       - "8081:8080"
     depends_on:
       - redis
-      - mysql
+      - db
     environment:
       - "REDIS_HOST=redis:6380"
       - "PORT=8081"
@@ -26,7 +26,7 @@ services:
     restart: unless-stopped
     volumes:
       - db:/var/lib/postgresql/data
-      - ./dmeeting-platform/initdb:/docker-entrypoint-initdb.d
+      - ./migrations/initdb:/docker-entrypoint-initdb.d
       - /etc/localtime:/etc/localtime:ro
     environment:
       - POSTGRES_USER=dmeeting

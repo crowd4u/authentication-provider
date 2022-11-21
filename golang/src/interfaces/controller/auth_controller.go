@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"notchman8600/authentication-provider/domain"
 	"notchman8600/authentication-provider/persistence"
-	"notchman8600/authentication-provider/utils"
 	"notchman8600/authentication-provider/usecase"
 	"time"
 

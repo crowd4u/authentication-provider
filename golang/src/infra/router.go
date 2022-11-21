@@ -6,7 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"notchman8600/authentication-provider/controller"
+	"notchman8600/authentication-provider/interfaces/controller"
 )
 
 type Router struct {
