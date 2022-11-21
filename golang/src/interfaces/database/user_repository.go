@@ -6,34 +6,38 @@ type UserRepository struct {
 	DBHandler
 }
 
-// func (repository *OAuthRepository) Store(client domain.Client) (err error) {
+// func (repository *OAuthRepository) Store(user domain.user) (err error) {
 // 	// TODO これってちゃんとPrepared Statementになってるの？
-// 	statement := `insert into clients (client_id, email, name, secret, expires_at) values($1,$2,$3,$4,$5)`
-// 	_, err = repository.Execute(statement, client.Id, client.Email, client.Name, client.Secret, client.ExpiresAt)
+// 	statement := `insert into users (user_id, email, name, secret, expires_at) values($1,$2,$3,$4,$5)`
+// 	_, err = repository.Execute(statement, user.Id, user.Email, user.Name, user.Secret, user.ExpiresAt)
 // 	return err
 // }
 
-func (repo *OAuthRepository) FindByUserId(userId string) (client domain.Client, err error) {
-	rows, err := repo.Query("select (client_id, email, name, secret, expires_at) from clients where client_id=$1 order by created_at desc limit 1", clientId)
+func (repo *OAuthRepository) FindByUserId(userId string) (user domain.User, err error) {
+	rows, err := repo.Query("select (id, email, user_name, given_name, family_name,sub,locale) from users where user_id=$1 order by created_at desc limit 1", userId)
 	if err != nil {
 		return
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var id string
-		var name string
-		var email string
-		var secret string
-		var expiresAt int64
+		var user_name string
+		var given_name string
+		var family_name string
+		var sub string
+		var locale string
 
-		if err = rows.Scan(&id, &email, &name, &secret, &expiresAt); err != nil {
+		if err = rows.Scan(&id, &user_name, &given_name, &family_name, &sub, &locale); err != nil {
 			return
 		}
-		client.Id = id
-		client.Name = name
-		client.Email = email
-		client.Secret = secret
-		client.ExpiresAt = expiresAt
+		user.Id = id
+		user.Name = user_name
+		user.FamilyName = family_name
+		user.GivenName = given_name
+		user.Sub = sub
+		user.Locale = locale
+		// hash passwordは返却しない
+		user.Password = ""
 	}
-	return client, err
+	return user, err
 }
