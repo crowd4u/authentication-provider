@@ -21,8 +21,6 @@ services:
     command: redis-server
   db:
     image: mysql:latest
-    ports:
-      - "3307:3306"
     restart: unless-stopped
     volumes:
       - db:/var/lib/mysql

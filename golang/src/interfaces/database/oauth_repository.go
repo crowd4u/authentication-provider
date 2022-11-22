@@ -1,8 +1,9 @@
 package database
 
 import (
-	"log"
+	"fmt"
 	"notchman8600/authentication-provider/domain"
+	"time"
 )
 
 type OAuthRepository struct {
@@ -17,20 +18,20 @@ func (repository *OAuthRepository) Store(client domain.Client) (err error) {
 }
 
 func (repo *OAuthRepository) FindByClientId(clientId string) (client domain.Client, err error) {
-	statement := "select id, email, client_name, user_secret, expires_at from clients where id=? order by created_at desc limit 1"
+	statement := "select id, email, client_name, user_secret, expires_at from clients where id = ? order by created_at desc limit 1"
+
 	rows, err := repo.Query(statement, clientId)
 	if err != nil {
-		log.Println(err)
 		return
 	}
 	defer rows.Close()
+
 	for rows.Next() {
 		var id string
-		var name string
 		var email string
+		var name string
 		var secret string
-		var expiresAt int64
-
+		var expiresAt time.Time
 		if err = rows.Scan(&id, &email, &name, &secret, &expiresAt); err != nil {
 			return
 		}
@@ -38,7 +39,8 @@ func (repo *OAuthRepository) FindByClientId(clientId string) (client domain.Clie
 		client.Name = name
 		client.Email = email
 		client.Secret = secret
-		client.ExpiresAt = expiresAt
+		client.ExpiresAt = expiresAt.Unix()
+		fmt.Println(client)
 	}
 	return client, err
 }

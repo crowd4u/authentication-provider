@@ -59,7 +59,8 @@ func (controller *AuthController) Auth(req *http.Request) (session domain.Sessio
 		RedirectURL: query.Get("redirect_url"),
 	}
 
-	requiredParameters := []string{"response_type", "client_id", "redirect_uri"}
+	// requiredParameters := []string{"response_type", "client_id", "redirect_uri"}
+	requiredParameters := []string{"client_id", "redirect_url"}
 	for _, param := range requiredParameters {
 		if !query.Has(param) {
 			//TODO エラー処理の文章を変える
@@ -71,6 +72,7 @@ func (controller *AuthController) Auth(req *http.Request) (session domain.Sessio
 	// ClientIdの取得
 	_, err = controller.OAuthInteractor.FindByClientId(session.ClientId)
 	if err != nil {
+		print(fmt.Println(err))
 		err = fmt.Errorf("error! client_id is not match")
 		return
 	}

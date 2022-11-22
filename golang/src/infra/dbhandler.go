@@ -86,7 +86,7 @@ type SqlRow struct {
 }
 
 func (r SqlRow) Scan(dest ...interface{}) error {
-	return r.Rows.Scan(dest)
+	return r.Rows.Scan(dest...)
 }
 
 func (r SqlRow) Close() error {

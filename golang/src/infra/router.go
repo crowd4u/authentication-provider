@@ -81,6 +81,10 @@ func authHandler(controller *controller.AuthController) http.Handler {
 		session, err := controller.Auth(r)
 		if err != nil {
 			//TODO エラーレスポンスの作成
+			fmt.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "error! \r\n")
+			return
 		}
 		// CookieにセッションIDをセット
 		cookie := &http.Cookie{
