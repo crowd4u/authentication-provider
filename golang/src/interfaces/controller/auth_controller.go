@@ -28,8 +28,6 @@ type AuthController struct {
 	UserInteractor  usecase.UserInteractor
 }
 
-var SessionList = make(map[string]domain.Session)
-
 func base64URLEncode(verifier string) string {
 	hash := sha256.Sum256([]byte(verifier))
 	return base64.RawURLEncoding.EncodeToString(hash[:])
@@ -84,9 +82,12 @@ func (controller *AuthController) Auth(req *http.Request) (session domain.Sessio
 	}
 	// セッションIDを生成
 	sessionId := uuid.New().String()
+
 	// セッション情報を保存しておく
+	session.Id = sessionId
 	// TODO いや、これはDBに保存するべき？
-	SessionList[sessionId] = session
+	persistence.SessionList[sessionId] = session
+
 	return
 }
 
@@ -101,7 +102,7 @@ func (controller *AuthController) AuthCheck(w http.ResponseWriter, req *http.Req
 
 		cookie, _ := req.Cookie("session")
 		http.SetCookie(w, cookie)
-		v, _ := SessionList[cookie.Value]
+		v := persistence.SessionList[cookie.Value]
 
 		authCodeString := uuid.New().String()
 		authData := domain.AuthCode{

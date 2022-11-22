@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"notchman8600/authentication-provider/interfaces/controller"
 	"os"
@@ -83,15 +82,14 @@ func authHandler(controller *controller.AuthController) http.Handler {
 		if err != nil {
 			//TODO エラーレスポンスの作成
 		}
-		if err := Templates["login"].Execute(w, struct {
-			ClientId string
-			Scope    string
-		}{
-			ClientId: session.ClientId,
-			Scope:    session.Scopes,
-		}); err != nil {
-			log.Println(err)
+		// CookieにセッションIDをセット
+		cookie := &http.Cookie{
+			Name:  "session",
+			Value: session.Id,
 		}
+		http.SetCookie(w, cookie)
+		fmt.Fprintf(w, "create session! \r\n")
+
 	})
 }
 

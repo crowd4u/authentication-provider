@@ -1,6 +1,7 @@
 package domain
 
 type Session struct {
+	Id                  string `json:"session_id"`
 	ClientId            string `json:"client_id"`
 	State               string `json:"state"`
 	Scopes              string `json:"scope"`
