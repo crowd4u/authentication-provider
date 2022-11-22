@@ -13,7 +13,7 @@ services:
       - "REDIS_HOST=redis:6380"
       - "PORT=8081"
       - "CORS_URL=http://localhost:3000"
-      - "SQL_URL=n4u:n4u-password@tcp(db:5433)/n4u-auth?charset=utf8mb4"
+      - "SQL_URL=n4u:n4u-password@tcp(db:3306)/n4u-auth?charset=utf8"
   redis:
     image: redis
     ports:
@@ -22,12 +22,13 @@ services:
   db:
     image: mysql:latest
     ports:
-      - "5433:5432"
+      - "3307:3306"
     restart: unless-stopped
     volumes:
-      - db:/var/lib/postgresql/data
-      - ./migrations/initdb:/docker-entrypoint-initdb.d
+      - db:/var/lib/mysql
+      - ./db/migrations:/docker-entrypoint-initdb.d
       - /etc/localtime:/etc/localtime:ro
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       - "MYSQL_ROOT_PASSWORD=dmeeting_password"
       - "MYSQL_USER=n4u"

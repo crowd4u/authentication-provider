@@ -14,7 +14,7 @@ type DBHandler struct {
 }
 
 func NewDB(db, dsn string) database.DBHandler {
-	conn, err := sql.Open(db, dsn+"?parseTime=true")
+	conn, err := sql.Open(db, dsn+"&parseTime=true")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -32,6 +32,7 @@ func (d *DBHandler) Query(statement string, args ...interface{}) (database.Row, 
 	}
 	defer stmt.Close()
 	if err != nil {
+		fmt.Println(err)
 		return row, err
 	}
 
@@ -39,7 +40,6 @@ func (d *DBHandler) Query(statement string, args ...interface{}) (database.Row, 
 	if err != nil {
 		fmt.Println(err)
 	}
-	defer rows.Close()
 
 	if err != nil {
 		return row, err
@@ -52,7 +52,11 @@ func (d *DBHandler) Query(statement string, args ...interface{}) (database.Row, 
 func (d *DBHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
 	result := new(SqlResult)
 	stmt, err := d.Conn.Prepare(statement)
+	if err != nil {
+		fmt.Println(err)
+	}
 	defer stmt.Close()
+
 	if err != nil {
 		return result, err
 	}

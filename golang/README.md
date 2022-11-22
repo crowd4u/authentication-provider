@@ -26,5 +26,5 @@ docker compose down --rmi all --volumes --remove-orphans
  query
  
  ```bash
- curl -X POST -H "Content-Type: application/json" -d "{"username" : "hoge" , "password" : "password"}" localhost:8081/auth
+ curl -X POST -H "Content-Type: application/json" -d '{"username":"hoge","password":"password","client_id":"example-user-id-1}' localhost:8081/auth
  ```

@@ -1,6 +1,9 @@
 package database
 
-import "notchman8600/authentication-provider/domain"
+import (
+	"log"
+	"notchman8600/authentication-provider/domain"
+)
 
 type OAuthRepository struct {
 	DBHandler
@@ -8,14 +11,16 @@ type OAuthRepository struct {
 
 func (repository *OAuthRepository) Store(client domain.Client) (err error) {
 	// TODO これってちゃんとPrepared Statementになってるの？
-	statement := `insert into clients (client_id, email, name, secret, expires_at) values($1,$2,$3,$4,$5)`
+	statement := `insert into clients (client_id, email, name, secret, expires_at) values(?,?,?,?,?)`
 	_, err = repository.Execute(statement, client.Id, client.Email, client.Name, client.Secret, client.ExpiresAt)
 	return err
 }
 
 func (repo *OAuthRepository) FindByClientId(clientId string) (client domain.Client, err error) {
-	rows, err := repo.Query("select (client_id, email, name, secret, expires_at) from clients where client_id=$1 order by created_at desc limit 1", clientId)
+	statement := "select id, email, client_name, user_secret, expires_at from clients where id=? order by created_at desc limit 1"
+	rows, err := repo.Query(statement, clientId)
 	if err != nil {
+		log.Println(err)
 		return
 	}
 	defer rows.Close()
