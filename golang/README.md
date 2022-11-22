@@ -20,3 +20,4 @@ How to reset container.
 ```shell
 docker compose down --rmi all --volumes --remove-orphans
 ```
+ // [ユーザ名]:[パスワード]@tcp([ホスト名]:[ポート番号])/[データベース名]?charset=[文字コード]

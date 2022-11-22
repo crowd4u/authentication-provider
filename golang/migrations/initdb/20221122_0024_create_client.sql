@@ -1,5 +1,5 @@
 create table clients(
-    id text UNIQUE,
+    id varchar(255) UNIQUE,
     client_name text,
     email text not null,
     redirect_url text,

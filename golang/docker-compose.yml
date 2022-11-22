@@ -13,7 +13,7 @@ services:
       - "REDIS_HOST=redis:6380"
       - "PORT=8081"
       - "CORS_URL=http://localhost:3000"
-      - "SQL_URL=postgres://db:5433/dmeeting?user=dmeeting&password=dmeeting_password&sslmode=disable"
+      - "SQL_URL=n4u:n4u-password@tcp(db:5433)/n4u-auth?charset=utf8mb4"
   redis:
     image: redis
     ports:
@@ -29,10 +29,11 @@ services:
       - ./migrations/initdb:/docker-entrypoint-initdb.d
       - /etc/localtime:/etc/localtime:ro
     environment:
-      - POSTGRES_USER=dmeeting
-      - POSTGRES_PASSWORD=dmeeting_password
-      - POSTGRES_DB=dmeeting
-      - TZ=Asia/Tokyo
+      - "MYSQL_ROOT_PASSWORD=dmeeting_password"
+      - "MYSQL_USER=n4u"
+      - "MYSQL_PASSWORD=n4u-password"
+      - "MYSQL_DATABASE=n4u-auth"
+      - "TZ=Asia/Tokyo"
 
 volumes:
   db:

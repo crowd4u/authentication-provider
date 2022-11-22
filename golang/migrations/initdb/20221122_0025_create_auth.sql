@@ -1,5 +1,5 @@
 create table authentications(
-    id text UNIQUE,
+    id varchar(255) UNIQUE,
     client_id text not null,
     hash_token text not null,
     token_type text not null,

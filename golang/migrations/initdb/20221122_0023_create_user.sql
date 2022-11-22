@@ -1,5 +1,5 @@
 create table users(
-    id text UNIQUE,
+    id varchar(255) UNIQUE,
     user_name text,
     email text not null,
     hash_password text not null,
