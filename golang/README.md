@@ -20,4 +20,11 @@ How to reset container.
 ```shell
 docker compose down --rmi all --volumes --remove-orphans
 ```
- // [ユーザ名]:[パスワード]@tcp([ホスト名]:[ポート番号])/[データベース名]?charset=[文字コード]
+ 
+ ## test
+
+ query
+ 
+ ```bash
+ curl -X POST -H "Content-Type: application/json" -d "{"username" : "hoge" , "password" : "password"}" localhost:8081/auth
+ ```

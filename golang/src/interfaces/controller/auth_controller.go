@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"notchman8600/authentication-provider/domain"
+	"notchman8600/authentication-provider/interfaces/database"
 	"notchman8600/authentication-provider/persistence"
 	"notchman8600/authentication-provider/usecase"
 	"os"
@@ -32,6 +33,21 @@ var SessionList = make(map[string]domain.Session)
 func base64URLEncode(verifier string) string {
 	hash := sha256.Sum256([]byte(verifier))
 	return base64.RawURLEncoding.EncodeToString(hash[:])
+}
+
+func NewAuthController(sqlHandler database.DBHandler) *AuthController {
+	return &AuthController{
+		OAuthInteractor: usecase.OAuthInteractor{
+			OAuthRepository: &database.OAuthRepository{
+				DBHandler: sqlHandler,
+			},
+		},
+		UserInteractor: usecase.UserInteractor{
+			UserRepository: &database.UserRepository{
+				DBHandler: sqlHandler,
+			},
+		},
+	}
 }
 
 // refer: https://github.com/sat0ken/goauth-server/blob/main/main.go

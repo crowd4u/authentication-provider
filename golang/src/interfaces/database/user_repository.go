@@ -6,15 +6,15 @@ type UserRepository struct {
 	DBHandler
 }
 
-// func (repository *OAuthRepository) Store(user domain.user) (err error) {
-// 	// TODO これってちゃんとPrepared Statementになってるの？
-// 	statement := `insert into users (user_id, email, name, secret, expires_at) values($1,$2,$3,$4,$5)`
-// 	_, err = repository.Execute(statement, user.Id, user.Email, user.Name, user.Secret, user.ExpiresAt)
-// 	return err
-// }
+func (repository *UserRepository) Store(user domain.User) (err error) {
+	// TODO これってちゃんとPrepared Statementになってるの？
+	statement := `insert into users (id,email,user_name,given_name,family_name,sub,locale) values($1,$2,$3,$4,$5,$6,$7)`
+	_, err = repository.Execute(statement, user.Id, user.Email, user.Name, user.GivenName, user.FamilyName, user.Sub, user.Locale)
+	return err
+}
 
-func (repo *OAuthRepository) FindByUserId(userId string) (user domain.User, err error) {
-	rows, err := repo.Query("select (id, email, user_name, given_name, family_name,sub,locale) from users where user_id=$1 order by created_at desc limit 1", userId)
+func (repo *UserRepository) FindByUserId(userId string) (user domain.User, err error) {
+	rows, err := repo.Query("select (id,email,user_name,given_name,family_name,sub,locale) from users where user_id=$1 order by created_at desc limit 1", userId)
 	if err != nil {
 		return
 	}

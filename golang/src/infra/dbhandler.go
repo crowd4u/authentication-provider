@@ -2,6 +2,7 @@ package infra
 
 import (
 	"database/sql"
+	"fmt"
 	"notchman8600/authentication-provider/interfaces/database"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -15,7 +16,7 @@ type DBHandler struct {
 func NewDB(db, dsn string) database.DBHandler {
 	conn, err := sql.Open(db, dsn+"?parseTime=true")
 	if err != nil {
-		// zap.S().Errorw(err.Error())
+		fmt.Println(err)
 	}
 	handler := new(DBHandler)
 	handler.Conn = conn
@@ -26,12 +27,20 @@ func (d *DBHandler) Query(statement string, args ...interface{}) (database.Row, 
 	row := new(SqlRow)
 
 	stmt, err := d.Conn.Prepare(statement)
+	if err != nil {
+		fmt.Println(err)
+	}
 	defer stmt.Close()
 	if err != nil {
 		return row, err
 	}
 
 	rows, err := stmt.Query(args...)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer rows.Close()
+
 	if err != nil {
 		return row, err
 	}
