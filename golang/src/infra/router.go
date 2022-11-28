@@ -103,6 +103,12 @@ func authCheckHandler(controller *controller.AuthController) http.Handler {
 	})
 }
 
+func tokenHandler(controller *controller.AuthController) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		controller.Token(w, r)
+	})
+}
+
 func sampleHandler() http.Handler {
 	// switching http method
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -122,5 +128,6 @@ func NewRouter() *Router {
 	router.Methods(http.MethodGet).Handler("/sample", sampleHandler())
 	router.Methods(http.MethodPost).Handler("/auth", authCheckHandler(authController))
 	router.Methods(http.MethodGet).Handler("/auth", authHandler(authController))
+	router.Methods(http.MethodGet).Handler("/token", tokenHandler(authController))
 	return router
 }

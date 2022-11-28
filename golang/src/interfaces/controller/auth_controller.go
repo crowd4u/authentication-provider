@@ -103,6 +103,7 @@ func (controller *AuthController) AuthCheck(w http.ResponseWriter, req *http.Req
 	} else {
 
 		cookie, _ := req.Cookie("session")
+		fmt.Println(cookie)
 		http.SetCookie(w, cookie)
 		v := persistence.SessionList[cookie.Value]
 
@@ -133,7 +134,7 @@ func (controller *AuthController) Token(w http.ResponseWriter, req *http.Request
 	query := req.Form
 	session := persistence.SessionList[cookie.Value]
 
-	requiredParameter := []string{"grant_type", "code", "client_id", "redirect_uri"}
+	requiredParameter := []string{"grant_type", "code", "client_id", "redirect_uri", "client_secret"}
 	// 必須パラメータのチェック
 	for _, v := range requiredParameter {
 		if !query.Has(v) {
@@ -203,11 +204,11 @@ func (controller *AuthController) Token(w http.ResponseWriter, req *http.Request
 	// PKCEのチェック
 	// clientから送られてきたverifyをsh256で計算&base64urlエンコードしてから
 	// 認可リクエスト時に送られてきてセッションに保存しておいたchallengeと一致するか確認
-	if session.OIDC == false && session.CodeChallenge != base64URLEncode(query.Get("code_verifier")) {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("PKCE check is err..."))
-		return
-	}
+	// if session.OIDC == false && session.CodeChallenge != base64URLEncode(query.Get("code_verifier")) {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	w.Write([]byte("PKCE check is err..."))
+	// 	return
+	// }
 
 	tokenString := uuid.New().String()
 	expireTime := time.Now().Unix() + persistence.ACCESS_TOKEN_DURATION
@@ -229,7 +230,7 @@ func (controller *AuthController) Token(w http.ResponseWriter, req *http.Request
 		ExpiresIn:   expireTime,
 	}
 	// TODO放り込むパラメーターが合っているか確認
-	user, err := controller.UserInteractor.FindByUserId(v.UserId)
+	user, err := controller.UserInteractor.FindByUserId(v.ClientId)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("user is not found"))
