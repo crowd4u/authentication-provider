@@ -14,7 +14,8 @@ func (repository *UserRepository) Store(user domain.User) (err error) {
 }
 
 func (repo *UserRepository) FindByUserId(userId string) (user domain.User, err error) {
-	rows, err := repo.Query("select id,email,user_name,given_name,family_name,sub,locale from users where user_id=$1 order by created_at desc limit 1", userId)
+	statement := `select id,email,user_name,given_name,family_name,sub,locale from users where id=? order by created_at desc limit 1`
+	rows, err := repo.Query(statement, userId)
 	if err != nil {
 		return
 	}

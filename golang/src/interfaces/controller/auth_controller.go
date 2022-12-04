@@ -59,7 +59,6 @@ func (controller *AuthController) Auth(req *http.Request) (session domain.Sessio
 		RedirectURL: query.Get("redirect_url"),
 	}
 
-	// requiredParameters := []string{"response_type", "client_id", "redirect_uri"}
 	requiredParameters := []string{"client_id", "redirect_url"}
 	for _, param := range requiredParameters {
 		if !query.Has(param) {
@@ -95,8 +94,15 @@ func (controller *AuthController) Auth(req *http.Request) (session domain.Sessio
 
 func (controller *AuthController) AuthCheck(w http.ResponseWriter, req *http.Request) {
 	clientId := req.FormValue("client_id")
+	userId := req.FormValue("user_id")
 
-	_, err := controller.OAuthInteractor.FindByClientId(clientId)
+	user, err := controller.UserInteractor.FindByUserId(userId)
+	if err != nil {
+		w.Write([]byte("login failed"))
+		return
+	}
+
+	_, err = controller.OAuthInteractor.FindByClientId(clientId)
 
 	if err != nil {
 		w.Write([]byte("login failed"))
@@ -109,7 +115,7 @@ func (controller *AuthController) AuthCheck(w http.ResponseWriter, req *http.Req
 
 		authCodeString := uuid.New().String()
 		authData := domain.AuthCode{
-			UserId:      clientId,
+			UserId:      user.Id,
 			ClientId:    v.ClientId,
 			Scopes:      v.Scopes,
 			RedirectURL: v.RedirectURL,
@@ -209,12 +215,17 @@ func (controller *AuthController) Token(w http.ResponseWriter, req *http.Request
 	// 	w.Write([]byte("PKCE check is err..."))
 	// 	return
 	// }
-
+	user, err := controller.UserInteractor.FindByUserId(v.UserId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("user is not found"))
+		return
+	}
 	tokenString := uuid.New().String()
 	expireTime := time.Now().Unix() + persistence.ACCESS_TOKEN_DURATION
 
 	tokenInfo := domain.TokenCode{
-		UserId:    v.ClientId,
+		UserId:    user.Id,
 		ClientId:  v.ClientId,
 		Scopes:    v.Scopes,
 		ExpiresAt: expireTime,
@@ -230,12 +241,7 @@ func (controller *AuthController) Token(w http.ResponseWriter, req *http.Request
 		ExpiresIn:   expireTime,
 	}
 	// TODO放り込むパラメーターが合っているか確認
-	user, err := controller.UserInteractor.FindByUserId(v.ClientId)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("user is not found"))
-		return
-	}
+
 	if session.OIDC {
 		tokenResp.IdToken, _ = makeJWT(user)
 	}

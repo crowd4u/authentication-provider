@@ -7,3 +7,5 @@ src/public/hots
 src/public/storage
 src/storage/*.key
 vendor/
+golang/session.txt
+golang/cookie.txt
