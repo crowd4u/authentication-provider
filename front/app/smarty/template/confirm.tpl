@@ -1,5 +1,5 @@
 <html>
 <body>
-{$smarty.post.name}
+{$smarty.post.id}
 </body>
 </html>

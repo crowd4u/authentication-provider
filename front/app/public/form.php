@@ -7,5 +7,4 @@ try {
     $form->showForm();
 } catch (SmartyException $e) {
     echo "Error" . $e->getMessage();
-
 }

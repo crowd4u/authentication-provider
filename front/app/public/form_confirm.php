@@ -1,7 +1,9 @@
 <?php
 require_once(__DIR__ . "/add_user.php");
+require_once(__DIR__ . "/../vendor/autoload.php");
 
 $form = new AddUserForm("ユーザーを追加");
+
 switch ($_POST['PHASE']) {
     case "DONE":
         try {
