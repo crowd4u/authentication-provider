@@ -39,5 +39,5 @@ curl -c cookie.txt --dump-header -  "localhost:8081/auth?client_id=example-clien
 get jwt
 
 ```bash
-curl -b cookie.txt --dump-header - "localhost:8081/token?client_id=example-client-id-1&grant_type=authorization_code&client_secret=secret&scope=hoge&redirect_uri=http://localhost:8081&state=hoge&code=9cd9d96c-175c-4262-b23c-e324778d08d0" 
+curl -b cookie.txt --dump-header - "localhost:8081/token?client_id=example-client-id-1&grant_type=authorization_code&client_secret=secret&scope=hoge&redirect_uri=http://localhost:8081&state=hoge&code=179e9fd5-44b9-4c88-bc64-0cf80fdd79d6" 
 ```
