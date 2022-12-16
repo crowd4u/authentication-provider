@@ -74,7 +74,7 @@ class AddUserForm
 
         //トークンを取得
         try {
-            $res = $client->get('http://localhost:8080/token', [
+            $res = $client->get('http://localhost:8081/token', [
                 "query" => [
                     "code" => $code,
                     "client_id" => "example-client-id-1",
