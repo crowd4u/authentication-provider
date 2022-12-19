@@ -1,5 +1,5 @@
 <html>
 <body>
-{$smarty.post.id}
+{$access_token}
 </body>
 </html>

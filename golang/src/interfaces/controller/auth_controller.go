@@ -176,12 +176,13 @@ func (controller *AuthController) Token(w http.ResponseWriter, req *http.Request
 	}
 
 	// 認可リクエスト時のリダイレクトURIと比較
-	if v.RedirectURL != query.Get("redirect_uri") {
-		log.Println("redirect_uri not match")
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(fmt.Sprintf("invalid_request. redirect_uri not match.\n")))
-		return
-	}
+	// TODO:バグ対応のため一旦オフに
+	// if v.RedirectURL != query.Get("redirect_uri") {
+	// 	log.Println("redirect_uri not match")
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	w.Write([]byte(fmt.Sprintf("invalid_request. redirect_uri not match.\n")))
+	// 	return
+	// }
 
 	// 認可コードの有効期限を確認
 	if v.ExpriresAt < time.Now().Unix() {

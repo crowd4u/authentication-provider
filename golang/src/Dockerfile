@@ -12,4 +12,5 @@ RUN go build -o app
 # Runtime Container
 FROM gcr.io/distroless/base
 COPY --from=builder /workdir/app /app
+EXPOSE 8080
 ENTRYPOINT ["/app"]

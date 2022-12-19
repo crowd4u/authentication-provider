@@ -4,6 +4,7 @@
         "smarty/smarty": "^4.3",
         "twbs/bootstrap": "5.0.2",
         "scssphp/scssphp": "^1.11",
-        "guzzle/guzzle": "^3.9"
+        "guzzlehttp/guzzle": "^7.5",
+        "ext-json": "*"
     }
 }

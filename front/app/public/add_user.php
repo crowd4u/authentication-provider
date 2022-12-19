@@ -1,6 +1,8 @@
 <?php
 
-use Guzzle\Http\Client;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+
 
 require_once(__DIR__ . "/../vendor/autoload.php");
 require_once(__DIR__ . "/../SmartyHelper.php");
@@ -50,46 +52,54 @@ class AddUserForm
         $client = new Client(['cookies' => true]);
         try {
             //TODO 認可エンドポイントのパラメーターを追加
-            $res = $client->get('http://localhost:8080/auth');
-        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+            $res = $client->get('http://api:8080/auth', ["query" => [
+                "client_id" => "example-client-id-1",
+                "scope" => "hoge",
+                "state" => "hoge",
+                "redirect_url" => "http://localhost:8081/public/form_confirm.php",
+            ]]);
+        } catch (ClientException $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
         }
 
         // 認証プロバイダーへ情報を送信
         $code = "";
+        $url = "";
         $parseUrl = "";
         try {
-            $res = $client->post('http://localhost:8080', [], ['forms_params' => [
+            $res = $client->post('http://api:8080/auth', ['forms_params' => [
                 "user_id" => "example-user-id-1",
                 "password" => "password",
                 "client_id" => "example-client-id-1",
-            ]]);
+            ], 'allow_redirects' => false]);
             $locationHeader = $res->getHeader("Location");
-            trigger_error($locationHeader, E_USER_NOTICE);
-            $parseUrl = parse_url($locationHeader);
-            $code = $parseUrl["code"];
-        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $e) {
+            $url = $locationHeader[0];
+            $parseUrl = parse_url($url);
+            $outputs = [];
+            parse_str($parseUrl['query'], $output);
+            $code = $output["code"];
+        } catch (ClientException $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
         }
 
         //トークンを取得
         try {
-            $res = $client->get('http://localhost:8081/token', [
+            $res = $client->get('http://api:8080/token', [
                 "query" => [
                     "code" => $code,
                     "client_id" => "example-client-id-1",
                     "grant_type" => "authorization_code",
                     "client_secret" => "secret",
                     "scope" => "hoge",
-                    "redirect_uri" => $parseUrl,
+                    "redirect_uri" => $url,
                 ]
             ]);
-            $body = $res->getResponseBody();
-            $this->smarty->assign("access_token", $body["token"]);
+            $body = json_decode($res->getBody()->getContents(), true);
+            $this->smarty->assign("access_token", $body["access_token"]);
         } catch (Exception $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
         }
         //TODO API Request
-        $this->smarty->display("confirm . tpl");
+        $this->smarty->display("confirm.tpl");
     }
 }
