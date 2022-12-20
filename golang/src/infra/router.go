@@ -126,7 +126,7 @@ func NewRouter() *Router {
 		tree: NewTree(),
 	}
 	// url := os.Getenv("SQL_URL")
-	url := "s2113591:tsukuba@tcp(localhost:3306)/s2113591?charset=utf8"
+	url := "s2113591:tsukuba@tcp(db:3306)/s2113591?charset=utf8"
 	sqlHandler := NewDB("mysql", url)
 	authController := controller.NewAuthController(sqlHandler)
 
