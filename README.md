@@ -20,7 +20,7 @@ docker-compose up -d
 
 ### how to access
 
-http://localhost/public/index.phpでトップページにアクセスすることが出来ます。
+http://localhost/public/index.php でトップページにアクセスすることが出来ます。
 
 
 ## about
