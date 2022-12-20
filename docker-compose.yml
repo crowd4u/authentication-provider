@@ -5,7 +5,7 @@ services:
       context: ./golang/src
     working_dir: /go/src
     ports:
-      - "8081:8080"
+      - "8081:8081"
     depends_on:
       - redis
       - db
@@ -13,15 +13,17 @@ services:
       - "REDIS_HOST=redis:6380"
       - "PORT=8081"
       - "CORS_URL=http://localhost:3000"
-      - "SQL_URL=n4u:n4u-password@tcp(db:3306)/n4u-auth?charset=utf8"
+      - "SQL_URL=s2113591:tsukuba@tcp(db:3306)/s2113591?charset=utf8"
   redis:
     image: redis
     ports:
       - "6380:6379"
     command: redis-server
   db:
-    image: mysql:latest
+    image: mysql:5.7
     restart: unless-stopped
+    ports:
+      - "3306:3306"
     volumes:
       - db:/var/lib/mysql
       - ./db/migrations:/docker-entrypoint-initdb.d
@@ -29,9 +31,9 @@ services:
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       - "MYSQL_ROOT_PASSWORD=dmeeting_password"
-      - "MYSQL_USER=n4u"
-      - "MYSQL_PASSWORD=n4u-password"
-      - "MYSQL_DATABASE=n4u-auth"
+      - "MYSQL_USER=s2113591"
+      - "MYSQL_PASSWORD=tsukuba"
+      - "MYSQL_DATABASE=s2113591"
       - "TZ=Asia/Tokyo"
 
   web:

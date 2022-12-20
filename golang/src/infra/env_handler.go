@@ -17,7 +17,7 @@ func NewEnvHandler() env.EnvHandler {
 func (handler *EnvHandler) ReadEnv(statement string) (string, error) {
 	// TODO:これは削除すること
 	// 演習室環境用にSQL_URLをハードコーディングの上でコンパイル時に叩き込む
-	const SQL_URL = "s2113591:tsukuba@tcp(localhost:3306)/s2113591?charset=utf8"
+	const SQL_URL = "s2113591:tsukuba@localhost:3306/s2113591?charset=utf8"
 	if statement == "SQL_URL" {
 		return SQL_URL, nil
 	}

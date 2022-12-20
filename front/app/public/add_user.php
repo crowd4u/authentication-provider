@@ -52,11 +52,11 @@ class AddUserForm
         $client = new Client(['cookies' => true]);
         try {
             //TODO 認可エンドポイントのパラメーターを追加
-            $res = $client->get('http://api:8080/auth', ["query" => [
+            $res = $client->get('https://api.digital-future.jp/auth', ["query" => [
                 "client_id" => "example-client-id-1",
                 "scope" => "hoge",
                 "state" => "hoge",
-                "redirect_url" => "http://localhost:8081/public/form_confirm.php",
+                "redirect_url" => "https://api.digital-future.jp/public/form_confirm.php",
             ]]);
         } catch (ClientException $e) {
             trigger_error($e->getMessage(), E_USER_WARNING);
@@ -67,7 +67,7 @@ class AddUserForm
         $url = "";
         $parseUrl = "";
         try {
-            $res = $client->post('http://api:8080/auth', ['forms_params' => [
+            $res = $client->post('https://api.digital-future.jp/auth', ['forms_params' => [
                 "user_id" => "example-user-id-1",
                 "password" => "password",
                 "client_id" => "example-client-id-1",
@@ -84,7 +84,7 @@ class AddUserForm
 
         //トークンを取得
         try {
-            $res = $client->get('http://api:8080/token', [
+            $res = $client->get('https://api.digital-future.jp/token', [
                 "query" => [
                     "code" => $code,
                     "client_id" => "example-client-id-1",

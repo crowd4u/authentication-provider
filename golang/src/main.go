@@ -9,5 +9,5 @@ func main() {
 	router := infra.NewRouter()
 	// mux := http.NewServeMux()
 	// mux.HandleFunc("/", infra.IndexHandler)
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":8081", router)
 }

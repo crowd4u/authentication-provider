@@ -258,6 +258,33 @@ func (controller *AuthController) Token(w http.ResponseWriter, req *http.Request
 
 }
 
+func (controller *AuthController) CheckToken(w http.ResponseWriter, req *http.Request) {
+	req.ParseForm()
+	query := req.Form
+
+	requiredParameter := []string{"token"}
+	// 必須パラメータのチェック
+	for _, v := range requiredParameter {
+		if !query.Has(v) {
+			log.Printf("%s is missing", v)
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(fmt.Sprintf("invalid_request. %s is missing\n", v)))
+			return
+		}
+	}
+
+	// 保存していた認可コードのデータを取得。なければエラーを返す
+	_, ok := persistence.TokenCodeList[query.Get("token")]
+	if !ok {
+		log.Println("auth code isn't exist")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(fmt.Sprintf("no authrization token")))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf("success")))
+}
+
 func readPrivateKey() (*rsa.PrivateKey, error) {
 
 	// 環境変数の読み込み

@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"net/http"
 	"notchman8600/authentication-provider/interfaces/controller"
-	"os"
 )
 
 type Router struct {
@@ -109,6 +108,12 @@ func tokenHandler(controller *controller.AuthController) http.Handler {
 	})
 }
 
+func tokenCheckHandler(controller *controller.AuthController) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		controller.CheckToken(w, r)
+	})
+}
+
 func sampleHandler() http.Handler {
 	// switching http method
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -120,7 +125,8 @@ func NewRouter() *Router {
 	router := &Router{
 		tree: NewTree(),
 	}
-	url := os.Getenv("SQL_URL")
+	// url := os.Getenv("SQL_URL")
+	url := "s2113591:tsukuba@tcp(localhost:3306)/s2113591?charset=utf8"
 	sqlHandler := NewDB("mysql", url)
 	authController := controller.NewAuthController(sqlHandler)
 
@@ -129,5 +135,7 @@ func NewRouter() *Router {
 	router.Methods(http.MethodPost).Handler("/auth", authCheckHandler(authController))
 	router.Methods(http.MethodGet).Handler("/auth", authHandler(authController))
 	router.Methods(http.MethodGet).Handler("/token", tokenHandler(authController))
+	router.Methods(http.MethodGet).Handler("/token/check", tokenCheckHandler(authController))
+
 	return router
 }
